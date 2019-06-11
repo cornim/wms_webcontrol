@@ -11,7 +11,7 @@ setuptools.setup(
     description="A library to control a Warema WMS WebControl web server.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/pypa/sampleproject",
+    url="https://github.com/cornim/wms_webcontrol.git",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
