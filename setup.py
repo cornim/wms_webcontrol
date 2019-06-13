@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="warema-wms-controller",
-    version="0.0.1",
+    version="0.1.0",
     author="Dr. Cornelius Mund",
     author_email="cornelius.mund@gmail.com",
     description="A library to control a Warema WMS WebControl web server.",
