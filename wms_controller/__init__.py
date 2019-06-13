@@ -25,7 +25,7 @@ logger = logging.getLogger('wms_controller')
 
 class WmsController:
     """
-    This class is in charge of 
+    This class is in charge of
     """
     def _retrieve_setup(self):
         room_id = 0
@@ -91,6 +91,11 @@ class WmsController:
                                   + SHUTTER_POSITION.format(format(new_shutter_pos, '02x')))
 
     def send_rx_move_shutter(self, room_id, channel_id):
+        """
+        This cmd is send out by the JS app of the web control server after the cmd to set a new shade position
+        but seems to serve no purpose.
+        :return: Parsed xml as an etree
+        """
         return self._send_command(RX_SHUTTER_STATE, format(room_id, '02x') + format(channel_id, '02x') + '00')
 
     def send_rx_check_ready(self, room_id=0, channel_id=0):
@@ -109,6 +114,8 @@ class Channel:
         self.name = name
         self.id = id
 
+TIME_BETWEEN_CMDS=2
+
 
 class Shade:
     def __init__(self, wms_ctrl: WmsController, room, channel, position=0, is_moving=False):
@@ -126,11 +133,12 @@ class Shade:
         return self.channel.name
 
     def update_shade_state(self):
+        Shade._try_cmd_n_times(lambda: self.wms_ctrl.send_rx_check_ready(self.room.id, self.channel.id))
+        time.sleep(TIME_BETWEEN_CMDS)
         shutter_xml = self.wms_ctrl.send_rx_shutter_state(self.room.id, self.channel.id)
-        self.is_moving = False if shutter_xml.find('fahrt').text == 0 else True
+        self.is_moving = False if shutter_xml.find('fahrt').text == '0' else True
         self.position = int(shutter_xml.find('position').text)/2
         self.state_last_updated = datetime.now()
-        self._cmd_finished()
 
     def get_shade_state(self, force_update = False):
         """
@@ -147,16 +155,21 @@ class Shade:
         Sets shade to new_position.
         :param new_position: New position of shade (0=open, 100=closed)
         """
+        Shade._try_cmd_n_times(lambda: self.wms_ctrl.send_rx_check_ready(self.room.id, self.channel.id))
+        time.sleep(TIME_BETWEEN_CMDS)
         self.wms_ctrl.send_tx_move_shutter(self.room.id, self.channel.id, new_position*2)
-        self.wms_ctrl.send_rx_move_shutter(self.room.id, self.channel.id)
-        self._cmd_finished()
+        # This cmd is sent by the JS app of the web control server but its purpose is unclear is feedback is always 0
+        #self.wms_ctrl.send_rx_move_shutter(self.room.id, self.channel.id)
 
-    def _cmd_finished(self):
-        time.sleep(0.1)
-        ret = self.wms_ctrl.send_rx_check_ready(self.room.id, self.channel.id)
-        feedback = ret.find('feedback')
-        if feedback is None or feedback.text != '1':
-            self._cmd_finished()
+    @staticmethod
+    def _try_cmd_n_times(cmd, n=5):
+        for i in range(n):
+            ret = cmd()
+            feedback = ret.find('feedback')
+            if feedback is not None and feedback.text == '1':
+                return ret
+            time.sleep(0.1)
+
 
     @staticmethod
     def get_all_shades(wms_ctrl=WmsController()):
