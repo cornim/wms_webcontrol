@@ -23,6 +23,10 @@ from warema_wms import WmsController, Shade
 shades = Shade.get_all_shades(WmsController('http:server_addr'))
 ```
 
+### Changes to version 0.1.1
+- Changed package structure
+- Improved documentation
+
 ### Changes to version 0.1.0
 - Improved protocol
 - Fixed bug where moving state was always true.
