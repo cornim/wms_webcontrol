@@ -20,7 +20,7 @@ have to create and pass your own WmsController.
 ```python
 from warema_wms import WmsController, Shade
 
-shades = Shade.get_all_shades(WmsController('http:server_addr'))
+shades = Shade.get_all_shades(WmsController('http://server_addr'))
 ```
 
 ### Changes to version 0.1.1
