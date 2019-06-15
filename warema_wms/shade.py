@@ -2,6 +2,8 @@ import time
 from datetime import datetime
 from warema_wms import WmsController
 
+# If commands are send to quickly after each other, an error is returned.
+# Hence I needed a wait time between sending the ready request and the actual command.
 TIME_BETWEEN_CMDS=2
 
 
@@ -21,9 +23,12 @@ class Shade:
         return self.channel.name
 
     def update_shade_state(self):
+        """
+        Forces an update of the state of the shade
+        """
         Shade._try_cmd_n_times(lambda: self.wms_ctrl.send_rx_check_ready(self.room.id, self.channel.id))
         time.sleep(TIME_BETWEEN_CMDS)
-        shutter_xml = self.wms_ctrl.send_rx_shutter_state(self.room.id, self.channel.id)
+        shutter_xml = self.wms_ctrl.send_rx_shade_state(self.room.id, self.channel.id)
         self.is_moving = False if shutter_xml.find('fahrt').text == '0' else True
         self.position = int(shutter_xml.find('position').text)/2
         self.state_last_updated = datetime.now()
@@ -45,7 +50,7 @@ class Shade:
         """
         Shade._try_cmd_n_times(lambda: self.wms_ctrl.send_rx_check_ready(self.room.id, self.channel.id))
         time.sleep(TIME_BETWEEN_CMDS)
-        self.wms_ctrl.send_tx_move_shutter(self.room.id, self.channel.id, new_position*2)
+        self.wms_ctrl.send_tx_move_shade(self.room.id, self.channel.id, new_position * 2)
         # This cmd is sent by the JS app of the web control server but its purpose is unclear is feedback is always 0
         #self.wms_ctrl.send_rx_move_shutter(self.room.id, self.channel.id)
 
@@ -61,6 +66,10 @@ class Shade:
 
     @staticmethod
     def get_all_shades(wms_ctrl=WmsController()):
+        """
+        Returns all shades in the WMS network which the WmsController is connected to.
+        :param wms_ctrl: The WmsController to use for the connection.
+        """
         shutters = []
         for room in wms_ctrl.rooms:
             for channel in room.channels:

@@ -14,17 +14,20 @@ RX_LANG = '023dff'
 RX_ROOM_NAME = '0203'
 RX_CHANNAL_INFO = '0347'
 RX_CHECK_READY = '0323'
-RX_SHUTTER_STATE = '0431'
+RX_SHADE_STATE = '0431'
 
-TX_MOVE_SHUTTER = '0821'
-SHUTTER_POSITION = '03{}ffffff'
+TX_MOVE_SHADE = '0821'
+SHADE_POSITION = '03{}ffffff'
 
 logger = logging.getLogger('warema_wms')
 
 
 class WmsController:
     """
-    This class is in charge of
+    This class is in charge of sending single commands to the WebControl server.
+    Commands should contain no (or as little as possible) logic.
+
+    Set log level to DEBUG to get a trace of sent commands and responses.
     """
     def _retrieve_setup(self):
         room_id = 0
@@ -82,20 +85,20 @@ class WmsController:
     def send_rx_channel_info(self, room_id, channel_id):
         return self._send_command(RX_CHANNAL_INFO, format(room_id, '02x') + format(channel_id, '02x'))
 
-    def send_rx_shutter_state(self, room_id, channel_id):
-        return self._send_command(RX_SHUTTER_STATE, format(room_id, '02x') + format(channel_id, '02x') + '01')
+    def send_rx_shade_state(self, room_id, channel_id):
+        return self._send_command(RX_SHADE_STATE, format(room_id, '02x') + format(channel_id, '02x') + '01')
 
-    def send_tx_move_shutter(self, room_id, channel_id, new_shutter_pos):
-        return self._send_command(TX_MOVE_SHUTTER, format(room_id, '02x') + format(channel_id, '02x')
-                                  + SHUTTER_POSITION.format(format(new_shutter_pos, '02x')))
+    def send_tx_move_shade(self, room_id, channel_id, new_shade_pos):
+        return self._send_command(TX_MOVE_SHADE, format(room_id, '02x') + format(channel_id, '02x')
+                                  + SHADE_POSITION.format(format(new_shade_pos, '02x')))
 
-    def send_rx_move_shutter(self, room_id, channel_id):
+    def send_rx_move_shade(self, room_id, channel_id):
         """
         This cmd is send out by the JS app of the web control server after the cmd to set a new shade position
-        but seems to serve no purpose.
-        :return: Parsed xml as an etree
+        but seems to serve no purpose. (Response always contains feedback=0)
+        :return: Parsed xml of the response as an xml.etree.ElementTree
         """
-        return self._send_command(RX_SHUTTER_STATE, format(room_id, '02x') + format(channel_id, '02x') + '00')
+        return self._send_command(RX_SHADE_STATE, format(room_id, '02x') + format(channel_id, '02x') + '00')
 
     def send_rx_check_ready(self, room_id=0, channel_id=0):
         return self._send_command(RX_CHECK_READY, format(room_id, '02x') + format(channel_id, '02x'))
