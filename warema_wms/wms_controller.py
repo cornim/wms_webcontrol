@@ -1,8 +1,9 @@
+import logging
 import time
+import xml.etree.ElementTree as ElemTree
+
 import requests
 from requests.compat import urljoin
-import xml.etree.ElementTree as ElemTree
-import logging
 
 ENDPOINT = 'protocol.xml'
 
