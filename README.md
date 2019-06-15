@@ -7,7 +7,7 @@ Currently only vertical blinds are supported. Feel free to extend support to oth
 Usage:
 
 ```python
-from wms_controller import Shade
+from warema_wms import Shade
 
 shades = Shade.get_all_shades()
 shades[0].set_shade_position(25) #0=open; 100=closed
@@ -18,9 +18,9 @@ in case your WebControl server is not under `http://webcontrol.local` you'll
 have to create and pass your own WmsController.
 
 ```python
-from wms_controller import WmsController, Shade
+from warema_wms import WmsController, Shade
 
-shades = Shade.get_all_shades(WmsController(<http_addrs of your WebControl server>))
+shades = Shade.get_all_shades(WmsController('http:server_addr'))
 ```
 
 ### Changes to version 0.1.0
