@@ -23,6 +23,9 @@ from warema_wms import WmsController, Shade
 shades = Shade.get_all_shades(WmsController('http://server_addr'))
 ```
 
+### Changes to version 0.1.2
+- Reduced wait time between sending http commands to wms webcontrol webserver to 0.5 seconds
+
 ### Changes to version 0.1.1
 - Changed package structure
 - Improved documentation

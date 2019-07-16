@@ -1,11 +1,11 @@
 import time
 from datetime import datetime
 
-from warema_wms import WmsController
+from warema_wms.wms_controller import WmsController
 
 # If commands are send to quickly after each other, an error is returned.
 # Hence I needed a wait time between sending the ready request and the actual command.
-TIME_BETWEEN_CMDS=2
+TIME_BETWEEN_CMDS=0.5
 
 
 class Shade:
