@@ -23,7 +23,7 @@ from warema_wms import WmsController, Shade
 shades = Shade.get_all_shades(WmsController('http://server_addr'))
 ```
 
-### Changes to version 0.1.3
+### Changes to version 0.1.4
 - Removed bug on system were 'http://webcontrl.local' does not resolve
 
 ### Changes to version 0.1.2
