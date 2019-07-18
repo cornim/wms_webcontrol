@@ -38,7 +38,7 @@ class Shade:
         """
         Returns the state that was received at the last update.
         :type update: bool Forces an updated if true
-        :return: Returns position (0-100), is_moving (True/False), last_updated (datetime)
+        :return: Returns position (0[open]-100[closed]), is_moving (True/False), last_updated (datetime)
         """
         if force_update or self.state_last_updated is None:
             self.update_shade_state()
@@ -66,11 +66,12 @@ class Shade:
 
 
     @staticmethod
-    def get_all_shades(wms_ctrl=WmsController()):
+    def get_all_shades(wms_ctrl=None):
         """
         Returns all shades in the WMS network which the WmsController is connected to.
         :param wms_ctrl: The WmsController to use for the connection.
         """
+        wms_ctrl = WmsController() if wms_ctrl is None else wms_ctrl
         shutters = []
         for room in wms_ctrl.rooms:
             for channel in room.channels:
