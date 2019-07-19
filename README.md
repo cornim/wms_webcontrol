@@ -23,8 +23,14 @@ from warema_wms import WmsController, Shade
 shades = Shade.get_all_shades(WmsController('http://server_addr'))
 ```
 
+### Changes to version 0.2.0
+- Made update procedure more resilient
+- Introduced parameters to set number of retries and time between commands
+- Set default time between commands to 0.1s
+- Set default number of retries to 3
+
 ### Changes to version 0.1.4
-- Removed bug on system were 'http://webcontrl.local' does not resolve
+- Removed bug on system were 'http://webcontrol.local' does not resolve
 
 ### Changes to version 0.1.2
 - Reduced wait time between sending http commands to wms webcontrol webserver to 0.5 seconds
