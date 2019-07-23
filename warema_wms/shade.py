@@ -70,13 +70,19 @@ class Shade:
         Sets shade to new_position.
         :param new_position: New position of shade (0=open, 100=closed)
         """
-        self._try_cmd_n_times(lambda: self.wms_ctrl.send_rx_check_ready(self.room.id, self.channel.id),
-                              self.num_retries)
-        time.sleep(self.time_between_cmds)
-        self.wms_ctrl.send_tx_move_shade(self.room.id, self.channel.id, new_position * 2)
-        # This cmd is sent by the JS app of the web control server but its purpose is unclear and the feedback
-        # is always 0
-        # self.wms_ctrl.send_rx_move_shutter(self.room.id, self.channel.id)
+        for _ in range(self.num_retries):
+            self._try_cmd_n_times(lambda: self.wms_ctrl.send_rx_check_ready(self.room.id, self.channel.id),
+                                  self.num_retries)
+            time.sleep(self.time_between_cmds)
+            self.wms_ctrl.send_tx_move_shade(self.room.id, self.channel.id, new_position * 2)
+            # This cmd is sent by the JS app of the web control server but its purpose is unclear and the feedback
+            # is always 0
+            # self.wms_ctrl.send_rx_move_shutter(self.room.id, self.channel.id)
+            if self._verify_set_cmd_sent(new_position):
+                return True
+        logger.warning("Shade {}:{} could not be set to target position {}"
+                       .format(self.room, self.channel, target_position))
+        return False
 
     def _try_cmd_n_times(self, cmd, n=3):
         for i in range(n):
@@ -85,6 +91,15 @@ class Shade:
             if feedback is None or (feedback is not None and feedback.text == '1'):
                 return ret
             time.sleep(self.time_between_cmds)
+
+    def _verify_set_cmd_sent(self, target_position):
+        time.sleep(self.time_between_cmds)
+        for _ in range(self.num_retries):
+            self.update_shade_state()
+            if self.is_moving or self.position == target_position:
+                return True
+            time.sleep(self.time_between_cmds)
+        return False
 
     @staticmethod
     def get_all_shades(wms_ctrl=None, time_between_cmds=0.1, num_retries=3):

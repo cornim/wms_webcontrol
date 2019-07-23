@@ -23,6 +23,9 @@ from warema_wms import WmsController, Shade
 shades = Shade.get_all_shades(WmsController('http://server_addr'))
 ```
 
+### Changes to version 0.2.1
+- Increased stability by checking if set position cmd was received
+
 ### Changes to version 0.2.0
 - Made update procedure more resilient
 - Introduced parameters to set number of retries and time between commands
