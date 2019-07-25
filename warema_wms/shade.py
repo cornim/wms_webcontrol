@@ -81,7 +81,7 @@ class Shade:
             if self._verify_set_cmd_sent(new_position):
                 return True
         logger.warning("Shade {}:{} could not be set to target position {}"
-                       .format(self.room, self.channel, target_position))
+                       .format(self.room, self.channel, new_position))
         return False
 
     def _try_cmd_n_times(self, cmd, n=3):
