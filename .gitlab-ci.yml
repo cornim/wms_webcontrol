@@ -8,8 +8,6 @@ variables:
 sonarqube-check:
   stage: test
   script:
-    - curl www.google.com
-    - curl https://corni.duckdns.org:20005/
     - sonar-scanner -Dsonar.qualitygate.wait=true
   allow_failure: true
   only:
