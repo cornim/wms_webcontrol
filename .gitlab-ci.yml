@@ -1,11 +1,11 @@
-image:
-  name: sonarsource/sonar-scanner-cli:latest
-  entrypoint: [""]
-variables:
-  SONAR_TOKEN: "5d290cab802e42bbc5277df972099d36c5ca9663"
-  SONAR_HOST_URL: "https://corni.duckdns.org:20006"
-  GIT_DEPTH: 0
 sonarqube-check:
+  image:
+    name: sonarsource/sonar-scanner-cli:latest
+    entrypoint: [""]
+  variables:
+    SONAR_TOKEN: "5d290cab802e42bbc5277df972099d36c5ca9663"
+    SONAR_HOST_URL: "https://corni.duckdns.org:20006"
+    GIT_DEPTH: 0
   stage: test
   script:
     - sonar-scanner -Dsonar.qualitygate.wait=true -Dsonar.projectKey=ww
