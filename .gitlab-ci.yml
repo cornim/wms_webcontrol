@@ -3,12 +3,12 @@ image:
   entrypoint: [""]
 variables:
   SONAR_TOKEN: "5d290cab802e42bbc5277df972099d36c5ca9663"
-  SONAR_HOST_URL: "http://sonarqube:20006"
+  SONAR_HOST_URL: "https://corni.duckdns.org:20006"
   GIT_DEPTH: 0
 sonarqube-check:
   stage: test
   script:
-    - sonar-scanner -Dsonar.qualitygate.wait=true -X
+    - sonar-scanner -Dsonar.qualitygate.wait=true
   allow_failure: true
   only:
     - merge_requests
