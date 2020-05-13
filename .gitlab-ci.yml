@@ -8,7 +8,7 @@ variables:
 sonarqube-check:
   stage: test
   script:
-    - sonar-scanner -Dsonar.qualitygate.wait=true
+    - sonar-scanner -Dsonar.qualitygate.wait=true -X
   allow_failure: true
   only:
     - merge_requests
