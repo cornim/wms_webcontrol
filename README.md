@@ -23,6 +23,11 @@ from warema_wms import WmsController, Shade
 shades = Shade.get_all_shades(WmsController('http://server_addr'))
 ```
 
+
+An undocumented example integration for home assistant can be found here:
+
+https://github.com/cornim/ha-warema-integration
+
 ### Changes to version 0.2.3
 - Fixed error log message in set_shade_position method
 
