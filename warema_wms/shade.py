@@ -83,6 +83,21 @@ class Shade:
         logger.warning("Shade {}:{} could not be set to target position {}"
                        .format(self.room.name, self.channel.name, new_position))
         return False
+    
+    def stop_moving_shade(self):
+        """
+        Stops a moving shade.
+        """
+        for _ in range(self.num_retries):
+            self._try_cmd_n_times(lambda: self.wms_ctrl.send_rx_check_ready(self.room.id, self.channel.id),
+                                  self.num_retries)
+            time.sleep(self.time_between_cmds)
+            self.wms_ctrl.send_tx_stop_shade(self.room.id, self.channel.id)
+            if self._verify_stop_cmd_sent():
+                return True
+        logger.warning("Shade {}:{} could not be stopped."
+                       .format(self.room.name, self.channel.name))
+        return False
 
     def _try_cmd_n_times(self, cmd, n=3):
         for i in range(n):
@@ -97,6 +112,15 @@ class Shade:
         for _ in range(self.num_retries):
             self.update_shade_state()
             if self.is_moving or self.position == target_position:
+                return True
+            time.sleep(self.time_between_cmds)
+        return False
+    
+    def _verify_stop_cmd_sent(self):
+        time.sleep(self.time_between_cmds)
+        for _ in range(self.num_retries):
+            self.update_shade_state()
+            if not self.is_moving:
                 return True
             time.sleep(self.time_between_cmds)
         return False
