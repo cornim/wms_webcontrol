@@ -19,6 +19,7 @@ RX_SHADE_STATE = '0431'
 
 TX_MOVE_SHADE = '0821'
 SHADE_POSITION = '03{}ffffff'
+STOP_SHADE = '0001ffffff'
 
 logger = logging.getLogger('warema_wms')
 
@@ -92,6 +93,10 @@ class WmsController:
     def send_tx_move_shade(self, room_id, channel_id, new_shade_pos):
         return self._send_command(TX_MOVE_SHADE, format(room_id, '02x') + format(channel_id, '02x')
                                   + SHADE_POSITION.format(format(new_shade_pos, '02x')))
+    
+    def send_tx_stop_shade(self, room_id, channel_id):
+        return self._send_command(TX_MOVE_SHADE, format(room_id, '02x') + format(channel_id, '02x') + STOP_SHADE)
+
 
     def send_rx_move_shade(self, room_id, channel_id):
         """
