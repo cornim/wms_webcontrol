@@ -54,6 +54,10 @@ class Shade:
             logger.warning("Couldn't update shade {} in room {}. Invalid response from server."
                            .format(self.get_channel_name(), self.get_room_name()))
             return False
+        except Exception:
+            logger.exception("Unexpected exception while updating shade {} in room {}."
+                             .format(self.get_channel_name(), self.get_room_name()))
+            return False
 
     def get_shade_state(self, force_update=False):
         """

@@ -28,6 +28,9 @@ An undocumented example integration for home assistant can be found here:
 
 https://github.com/cornim/ha-warema-integration
 
+### Changes to version 0.2.4
+- Improved error handling while updating shades (network timeouts)
+
 ### Changes to version 0.2.3
 - Fixed error log message in set_shade_position method
 

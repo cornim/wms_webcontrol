@@ -72,7 +72,7 @@ class WmsController:
     def _send_command(self, cmd, additional_str=''):
         cc, ts = self._increment()
         params = {GET_PARAM1: CMD_PREFIX + format(cc, '02x') + cmd + additional_str, GET_PARAM2: str(ts)}
-        r = requests.get(urljoin(self.target, ENDPOINT), params=params)
+        r = requests.get(urljoin(self.target, ENDPOINT), params=params, timeout=10)
         logger.debug("Sending request: {}".format(r.request.path_url))
         logger.debug("Recieved response: {}".format(r.text))
         return ElemTree.fromstring(r.text)
