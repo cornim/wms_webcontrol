@@ -28,7 +28,7 @@ class Shade:
         self.time_between_cmds = time_between_cmds
         self.num_retries = num_retries
         self.position = position  # 0 for open 100 for closed
-        self.tilt_position = tilt_position    # lets see what happens now #
+        self.tilt_position = tilt_position    # lets see what happens now # 30=tilt open 100=tilt closed, 6 Raffstores show different values here, from 20 - 28 & 101 - 104
         self.is_moving = is_moving
         self.state_last_updated = None
 
