@@ -18,16 +18,17 @@ RX_CHECK_READY = '0323'
 RX_SHADE_STATE = '0431'
 
 TX_MOVE_SHADE = '0821'
-SHADE_POSITION = '03{}ffffff'
+SHADE_POSITION = '03{}dfffff'
+TILT_POSITION = '03ff{}ffff'
+STOP_SHADE = '01ffffffff'
 
 logger = logging.getLogger('warema_wms')
-
+logging.debug
 
 class WmsController:
     """
     This class is in charge of sending single commands to the WebControl server.
     Commands should contain no (or as little as possible) logic.
-
     Set log level to DEBUG to get a trace of sent commands and responses.
     """
     def _retrieve_setup(self):
@@ -69,6 +70,7 @@ class WmsController:
         self.initial_ts += 1
         return res
 
+
     def _send_command(self, cmd, additional_str=''):
         cc, ts = self._increment()
         params = {GET_PARAM1: CMD_PREFIX + format(cc, '02x') + cmd + additional_str, GET_PARAM2: str(ts)}
@@ -92,6 +94,13 @@ class WmsController:
     def send_tx_move_shade(self, room_id, channel_id, new_shade_pos):
         return self._send_command(TX_MOVE_SHADE, format(room_id, '02x') + format(channel_id, '02x')
                                   + SHADE_POSITION.format(format(new_shade_pos, '02x')))
+
+    def send_tx_tilt_shade(self, room_id, channel_id, new_tilt_pos):
+        return self._send_command(TX_MOVE_SHADE, format(room_id, '02x') + format(channel_id, '02x')
+                                  + TILT_POSITION.format(format(new_tilt_pos, '02x')))
+
+    def send_tx_stop_shade(self, room_id, channel_id):
+        return self._send_command(TX_MOVE_SHADE, format(room_id, '02x') + format(channel_id, '02x') + STOP_SHADE)
 
     def send_rx_move_shade(self, room_id, channel_id):
         """
