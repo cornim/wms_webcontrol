@@ -9,7 +9,7 @@ logger = logging.getLogger('warema_wms')
 
 class Shade:
     def __init__(self, wms_ctrl: WmsController, room, channel,
-                 time_between_cmds=0.1, num_retries=3, position=0, is_moving=False):
+                 time_between_cmds=0.1, num_retries=3, position=0, tilt_position=30, is_moving=False):
         """
         Initializes a Shade entity
         :param wms_ctrl: Allows to pass in your own version of a WmsController
@@ -28,6 +28,7 @@ class Shade:
         self.time_between_cmds = time_between_cmds
         self.num_retries = num_retries
         self.position = position  # 0 for open 100 for closed
+        self.tilt_position = tilt_position    # 30=tilt open 100=tilt closed, 6 Raffstores show different values here, from 20 - 28 & 101 - 104
         self.is_moving = is_moving
         self.state_last_updated = None
 
@@ -48,6 +49,7 @@ class Shade:
         try:
             self.is_moving = False if shutter_xml.find('fahrt').text == '0' else True
             self.position = int(shutter_xml.find('position').text) / 2
+            self.tilt_position = int(shutter_xml.find('winkel').text) / 2
             self.state_last_updated = datetime.now()
             return True
         except AttributeError:
@@ -67,7 +69,7 @@ class Shade:
         """
         if force_update or self.state_last_updated is None:
             self.update_shade_state()
-        return self.position, self.is_moving, self.state_last_updated
+        return self.position, self.is_moving, self.tilt_position, self.state_last_updated
 
     def set_shade_position(self, new_position):
         """
@@ -88,6 +90,37 @@ class Shade:
                        .format(self.room.name, self.channel.name, new_position))
         return False
 
+    def set_shade_tilt_position(self, new_tilt_position):
+        """
+        Sets shade to new_tilt.
+        :param new_tilt: New tilt of shade (30=open, 100=closed)
+        """
+        for _ in range(self.num_retries):
+            self._try_cmd_n_times(lambda: self.wms_ctrl.send_rx_check_ready(self.room.id, self.channel.id),
+                                  self.num_retries)
+            time.sleep(self.time_between_cmds)
+            self.wms_ctrl.send_tx_tilt_shade(self.room.id, self.channel.id, new_tilt_position * 2)
+            if self._verify_tilt_cmd_sent(new_tilt_position):
+                return True
+        logger.warning("Shade {}:{} could not be set to target tilt {}"
+                       .format(self.room.name, self.channel.name, new_tilt_position))
+        return False
+
+    def stop_moving_shade(self):
+        """
+        Stops a moving shade.
+        """
+        for _ in range(self.num_retries):
+            self._try_cmd_n_times(lambda: self.wms_ctrl.send_rx_check_ready(self.room.id, self.channel.id),
+                                  self.num_retries)
+            time.sleep(self.time_between_cmds)
+            self.wms_ctrl.send_tx_stop_shade(self.room.id, self.channel.id)
+            if self._verify_stop_cmd_sent():
+                return True
+        logger.warning("Shade {}:{} could not be stopped."
+                       .format(self.room.name, self.channel.name))
+        return False
+
     def _try_cmd_n_times(self, cmd, n=3):
         for i in range(n):
             ret = cmd()
@@ -101,6 +134,24 @@ class Shade:
         for _ in range(self.num_retries):
             self.update_shade_state()
             if self.is_moving or self.position == target_position:
+                return True
+            time.sleep(self.time_between_cmds)
+        return False
+
+    def _verify_tilt_cmd_sent(self, target_tilt_position):
+        time.sleep(self.time_between_cmds)
+        for _ in range(self.num_retries):
+            self.update_shade_state()
+            if self.is_moving or self.tilt_position == target_tilt_position:
+                return True
+            time.sleep(self.time_between_cmds)
+        return False
+
+    def _verify_stop_cmd_sent(self):
+        time.sleep(self.time_between_cmds)
+        for _ in range(self.num_retries):
+            self.update_shade_state()
+            if not self.is_moving:
                 return True
             time.sleep(self.time_between_cmds)
         return False
