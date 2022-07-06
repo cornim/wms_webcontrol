@@ -11,6 +11,7 @@ from warema_wms import Shade
 
 shades = Shade.get_all_shades()
 shades[0].set_shade_position(25) #0=open; 100=closed
+shades[1].set_shade_tilt_position(100) #30=tilt open; 100=tilt closed
 shades[1].get_shade_state(True) #Force update and get shade state
 ```
 
