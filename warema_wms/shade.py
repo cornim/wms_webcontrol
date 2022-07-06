@@ -9,7 +9,7 @@ logger = logging.getLogger('warema_wms')
 
 class Shade:
     def __init__(self, wms_ctrl: WmsController, room, channel,
-                 time_between_cmds=0.1, num_retries=3, position=0, tilt_position=0, is_moving=False):
+                 time_between_cmds=0.1, num_retries=3, position=0, tilt_position=30, is_moving=False):
         """
         Initializes a Shade entity
         :param wms_ctrl: Allows to pass in your own version of a WmsController
