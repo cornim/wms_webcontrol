@@ -18,7 +18,7 @@ RX_CHECK_READY = '0323'
 RX_SHADE_STATE = '0431'
 
 TX_MOVE_SHADE = '0821'
-SHADE_POSITION = '03{}dfffff'   # df = trial to move raffstores in tilt closed pos., working in console but not in HA
+SHADE_POSITION = '03{}ffffff'
 TILT_POSITION = '03ff{}ffff'
 STOP_SHADE = '01ffffffff'       # at least at my setup it works (instead of STOP_SHADE = '0001ffffff')
 
