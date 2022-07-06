@@ -93,7 +93,7 @@ class Shade:
     def set_shade_tilt_position(self, new_tilt_position):
         """
         Sets shade to new_tilt.
-        :param new_tilt: New tilt of shade
+        :param new_tilt: New tilt of shade (30=open, 100=closed)
         """
         for _ in range(self.num_retries):
             self._try_cmd_n_times(lambda: self.wms_ctrl.send_rx_check_ready(self.room.id, self.channel.id),
