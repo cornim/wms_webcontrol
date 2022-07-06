@@ -23,7 +23,6 @@ TILT_POSITION = '03ff{}ffff'
 STOP_SHADE = '01ffffffff'       # at least at my setup it works (instead of STOP_SHADE = '0001ffffff')
 
 logger = logging.getLogger('warema_wms')
-logging.debug
 
 class WmsController:
     """
