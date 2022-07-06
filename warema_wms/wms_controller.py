@@ -70,7 +70,6 @@ class WmsController:
         self.initial_ts += 1
         return res
 
-
     def _send_command(self, cmd, additional_str=''):
         cc, ts = self._increment()
         params = {GET_PARAM1: CMD_PREFIX + format(cc, '02x') + cmd + additional_str, GET_PARAM2: str(ts)}
