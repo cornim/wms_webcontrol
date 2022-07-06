@@ -100,9 +100,6 @@ class Shade:
                                   self.num_retries)
             time.sleep(self.time_between_cmds)
             self.wms_ctrl.send_tx_tilt_shade(self.room.id, self.channel.id, new_tilt_position * 2)
-            # This cmd is sent by the JS app of the web control server but its purpose is unclear and the feedback
-            # is always 0
-            # self.wms_ctrl.send_rx_move_shutter(self.room.id, self.channel.id)
             if self._verify_tilt_cmd_sent(new_tilt_position):
                 return True
         logger.warning("Shade {}:{} could not be set to target tilt {}"
